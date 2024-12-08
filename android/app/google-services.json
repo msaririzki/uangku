@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357875289165",
+    "project_id": "uangku-f36c6",
+    "storage_bucket": "uangku-f36c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357875289165:android:343c053242afdfc2a16004",
+        "android_client_info": {
+          "package_name": "com.example.mob3_uas_klp_02"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhWboE-YLRkOvHHnQTF2u7pg7vU_hApGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
