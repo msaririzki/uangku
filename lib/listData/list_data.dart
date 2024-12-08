@@ -7,6 +7,7 @@ import 'package:mob3_uas_klp_02/widget/dialog.dart';
 
 
 
+
 class ListData extends StatelessWidget {
   final String? uid;
   final String kategori;

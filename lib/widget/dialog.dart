@@ -218,7 +218,6 @@ class DialogWidget {
                     if (formKey.currentState!.validate()) {
                       int nominalInt = int.parse(editNominalController.text
                           .replaceAll(RegExp(r'[^0-9]'), ''));
-
                       bloc1.add(UpdateDateLaporanEvent(
                           uid: uidEdit,
                           nominal: nominalInt,

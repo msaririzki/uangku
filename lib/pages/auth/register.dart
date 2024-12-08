@@ -4,7 +4,7 @@ import 'package:mob3_uas_klp_02/bloc/auth/auth_bloc.dart';
 import 'package:mob3_uas_klp_02/global_variable.dart';
 import 'package:mob3_uas_klp_02/models/user_model.dart';
 import 'package:mob3_uas_klp_02/widget/elevated_button.dart';
-import 'package:mob3_uas_klp_02/widget/number_field.dart';
+// import 'package:mob3_uas_klp_02/widget/number_field.dart';
 import 'package:mob3_uas_klp_02/widget/text_field.dart';
 
 
@@ -39,14 +39,12 @@ class _RegisterViewState extends State<RegisterView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passController.dispose();
-    _phoneController.dispose();
     _nameController.dispose();
 
     super.dispose();
@@ -64,14 +62,14 @@ class _RegisterViewState extends State<RegisterView> {
         _passController.clear();
       } else if (state is Authenticated) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Daftar Akun Berhasil')),
+          const SnackBar(content: Text('Daftar Akun Berhasil, Silahkan login')),
         );
       }
     }, builder: (context, state) {
       if (state is Authenticated) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.pushNamedAndRemoveUntil(
-              context, 'userPage', (Route<dynamic> route) => false);
+              context, 'loginPage', (Route<dynamic> route) => false);
         });
       }
 
@@ -129,17 +127,6 @@ class _RegisterViewState extends State<RegisterView> {
                       const SizedBox(
                         height: 10,
                       ),
-                      FormNumber(
-                        labelText: "No Hp",
-                        hintText: "Masukkan No Hp anda",
-                        controller: _phoneController,
-                        prefixIcon: const Icon(Icons.phone),
-                        backgroundColor: Colors.white,
-                        borderFocusColor: Colors.blue,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       FormText(
                         labelText: "Nama",
                         hintText: "Masukkan nama anda",
@@ -183,7 +170,6 @@ class _RegisterViewState extends State<RegisterView> {
                             UserModel user = UserModel(
                               email: _emailController.text,
                               name: _nameController.text,
-                              phone: _phoneController.text,
                               password: _passController.text,
                             );
 

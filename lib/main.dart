@@ -48,8 +48,8 @@ class MyApp extends StatelessWidget {
   ThemeData settingTheme() {
     return ThemeData(
       useMaterial3: true,
-      primaryColor: const Color(0xFFF38181),
-      secondaryHeaderColor: const Color(0xFF73BBA3),
+      primaryColor: const Color.fromARGB(255, 129, 213, 252),
+      secondaryHeaderColor: const Color.fromARGB(255, 126, 241, 103),
       highlightColor: Colors.blue, // button color
       fontFamily: 'Roboto',
       elevatedButtonTheme: ElevatedButtonThemeData(

@@ -44,10 +44,10 @@ class _BottomBarViewState extends State<BottomBarView> {
   DateTime? currentBackPressTime;
   bool canPopNow = false;
   final List<Widget> screens = [
-    const Home(),
-    const Input(),
     Report(),
-    const Categorys(),
+    const Input(),
+    Categorys(),
+    const Home(),
   ];
 
   // form category
@@ -94,7 +94,7 @@ class _BottomBarViewState extends State<BottomBarView> {
         },
         child: Scaffold(
           body: screens[currentIndex],
-          floatingActionButton: currentIndex == 3
+          floatingActionButton: currentIndex == 2
               ? FloatingActionButton.extended(
                   backgroundColor: Colors.blue,
                   onPressed: () {
@@ -127,7 +127,7 @@ class _BottomBarViewState extends State<BottomBarView> {
                   Icons.home,
                 ),
                 icon: Icon(Icons.home_outlined),
-                label: 'Beranda',
+                label: 'Dashboard',
               ),
               NavigationDestination(
                   selectedIcon: Icon(
@@ -139,16 +139,16 @@ class _BottomBarViewState extends State<BottomBarView> {
                   label: 'Input Data'),
               NavigationDestination(
                   selectedIcon: Icon(
-                    Icons.account_balance,
-                  ),
-                  icon: Icon(Icons.account_balance_outlined),
-                  label: 'Laporan'),
-              NavigationDestination(
-                  selectedIcon: Icon(
                     Icons.category,
                   ),
                   icon: Icon(Icons.category_outlined),
                   label: 'Kategori'),
+              NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.account_balance,
+                  ),
+                  icon: Icon(Icons.account_balance_outlined),
+                  label: 'Laporan'),
             ],
           ),
         ),
