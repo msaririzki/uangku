@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
       fontFamily: 'Roboto',
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFEAFFD0),
+            backgroundColor: const Color.fromARGB(255, 202, 223, 178),
             elevation: 8,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
