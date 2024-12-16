@@ -69,11 +69,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime tenYearsAgo = DateTime(now.year - 10, now.month, now.day);
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _birthDate ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: tenYearsAgo,
     );
     if (picked != null && picked != _birthDate) {
       setState(() {

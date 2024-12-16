@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class FormDate extends StatefulWidget {
-  const FormDate({
-    super.key,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderFocusColor,
-    this.suffixIcon,
-    this.controller,
-    required this.labelText,
-    required this.hintText,
-  });
-
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final Color? borderFocusColor;
-  final Widget? suffixIcon;
-  final TextEditingController? controller;
+class FormDate extends StatelessWidget {
   final String labelText;
   final String hintText;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
 
-  @override
-  State<FormDate> createState() => _FormDateState();
-}
+  const FormDate({
+    Key? key,
+    required this.labelText,
+    required this.hintText,
+    required this.controller,
+    this.validator,
+  }) : super(key: key);
 
-class _FormDateState extends State<FormDate> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: widget.controller,
+      controller: controller,
       readOnly: true,
-      validator: (value) {
-        if (value == null || value.isEmpty || value == '') {
-          return 'Form tidak boleh kosong';
-        }
-        return null;
-      },
+      validator: validator,
       onTap: () async {
         DateTime now = DateTime.now();
         DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
@@ -52,32 +36,29 @@ class _FormDateState extends State<FormDate> {
         if (pickedDate != null) {
           String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
 
-          setState(() {
-            widget.controller!.text = formattedDate;
-          });
+          controller.text = formattedDate;
         }
       },
       decoration: InputDecoration(
-        labelText: widget.labelText,
-        hintText: widget.hintText,
-        suffixIcon: widget.suffixIcon ??
-            const Padding(
-              padding: EdgeInsets.only(right: 12),
-              child: Icon(Icons.calendar_today),
-            ),
+        labelText: labelText,
+        hintText: hintText,
+        suffixIcon: const Padding(
+          padding: EdgeInsets.only(right: 12),
+          child: Icon(Icons.calendar_today),
+        ),
         filled: true,
-        fillColor: widget.backgroundColor ?? Colors.transparent,
+        fillColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(15)),
           borderSide: BorderSide(
-            color: widget.borderColor ?? Colors.black,
+            color: Colors.black,
             width: 1.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(15)),
           borderSide: BorderSide(
-            color: widget.borderFocusColor ?? Colors.black,
+            color: Colors.black,
             width: 2.0,
           ),
         ),

@@ -89,7 +89,18 @@ class Input extends StatelessWidget {
                   FormDate(
                       labelText: 'Tanggal *',
                       hintText: '',
-                      controller: dateController),
+                      controller: dateController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Tanggal tidak boleh kosong';
+                        }
+                        DateTime selectedDate =
+                            DateFormat('dd-MM-yyyy').parse(value);
+                        if (selectedDate.isAfter(DateTime.now())) {
+                          return 'Transaksi tidak boleh dilakukan di masa depan';
+                        }
+                        return null; // Valid
+                      }),
                   const SizedBox(height: 15),
                   BlocBuilder<CategoryBloc, CategoryState>(
                     builder: (context, state) {
