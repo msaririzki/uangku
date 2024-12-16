@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mob3_uas_klp_02/pages/auth/login.dart';
 import 'package:mob3_uas_klp_02/pages/auth/register.dart';
+import 'package:mob3_uas_klp_02/pages/auth/resetPasword.dart';
 import 'package:mob3_uas_klp_02/pages/intro.dart';
 import 'package:mob3_uas_klp_02/pages/reconnect.dart';
 import 'package:mob3_uas_klp_02/pages/splash.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         'register': (context) => const Register(),
         'userPage': (context) => const BottomBar(),
         'reconnect': (context) => const Reconnect(),
+        'resetPassword': (context) => const ResetPasswordScreen(),
       },
     );
   }

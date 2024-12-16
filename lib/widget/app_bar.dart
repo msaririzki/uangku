@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mob3_uas_klp_02/widget/dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mob3_uas_klp_02/widget/profile_Page.dart'; // Import halaman ProfilePage
 
 class Navbar extends StatefulWidget {
   const Navbar({super.key});
@@ -11,24 +12,21 @@ class Navbar extends StatefulWidget {
 
 class _NavbarState extends State<Navbar> {
   String name = '';
+  String? selectedAvatar;
 
   @override
   void initState() {
     super.initState();
-    _loadUserName();
+    _loadUserData();
   }
 
-  Future<void> _loadUserName() async {
-    String userName = await getUserName();
-    setState(() {
-      name = userName; // Memperbarui state dengan nama pengguna
-    });
-  }
-
-  Future<String> getUserName() async {
+  Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('name') ??
-        ''; // Menghindari null dengan memberikan default
+    setState(() {
+      name = prefs.getString('name') ?? ''; // Default ke string kosong
+      selectedAvatar = prefs.getString('selectedAvatar'); // Load avatar yang dipilih
+    });
+    debugPrint('Selected Avatar: $selectedAvatar'); // Log untuk debugging
   }
 
   @override
@@ -39,7 +37,33 @@ class _NavbarState extends State<Navbar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(name, style: Theme.of(context).primaryTextTheme.titleSmall),
+          GestureDetector(
+            onTap: () {
+              // Navigasi ke halaman ProfilePage saat foto profil ditekan
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              ).then((_) => _loadUserData()); // Refresh data setelah kembali dari ProfilePage
+            },
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage: selectedAvatar != null
+                      ? AssetImage(selectedAvatar!)
+                      : null, // Gunakan avatar yang dipilih
+                  child: selectedAvatar == null
+                      ? const Icon(Icons.person, size: 20, color: Colors.grey)
+                      : null,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  name,
+                  style: Theme.of(context).primaryTextTheme.titleSmall,
+                ),
+              ],
+            ),
+          ),
           IconButton(
             onPressed: () {
               DialogWidget.logout(context);

@@ -142,6 +142,20 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, 'resetPassword');
+                          },
+                          child: const Text(
+                            'Lupa Password?',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         ButtonElevated(
                           onPress: state is AuthLoading
