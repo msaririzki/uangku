@@ -8,12 +8,12 @@ class FormDate extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const FormDate({
-    Key? key,
+    super.key,
     required this.labelText,
     required this.hintText,
     required this.controller,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

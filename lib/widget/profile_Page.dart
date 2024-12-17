@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   // ignore: unused_field
   File? _profileImage;
 
-  List<String> _avatarList = [
+  final List<String> _avatarList = [
     'assets/apatar1.png',
     'assets/apatar2.jpg',
     'assets/apatar3.jpg',
