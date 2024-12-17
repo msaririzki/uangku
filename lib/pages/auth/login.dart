@@ -1,12 +1,22 @@
+/// Screen untuk login pengguna
+/// Menggunakan BLoC pattern untuk manajemen state
+/// 
+/// Fitur:
+/// - Form login (email & password)
+/// - Validasi input
+/// - Toggle visibility password
+/// - Loading state
+/// - Error handling
+/// - Navigasi ke register dan reset password
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mob3_uas_klp_02/bloc/auth/auth_bloc.dart';
 import 'package:mob3_uas_klp_02/widget/elevated_button.dart';
 import 'package:mob3_uas_klp_02/widget/text_field.dart';
-
 import '../../global_variable.dart';
 
-// login bloc
+/// Widget provider untuk AuthBloc
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -24,7 +34,7 @@ class _LoginState extends State<Login> {
   }
 }
 
-// login view
+/// Widget utama untuk tampilan login
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -33,13 +43,17 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  // State untuk toggle password visibility
   bool _obscureText = true;
+  // Key untuk form validation
   final _formKey = GlobalKey<FormState>();
+  // Controller untuk input fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
   @override
   void dispose() {
+    // Bersihkan controller saat widget di-dispose
     _emailController.dispose();
     _passController.dispose();
     super.dispose();
@@ -48,20 +62,26 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthBloc>(context);
+    
     return BlocConsumer<AuthBloc, AuthState>(
+      // Handler untuk state changes
       listener: (context, state) {
         if (state is AuthenticatedError) {
+          // Tampilkan error message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Gagal Login: ${state.message}')),
           );
           _passController.clear();
         } else if (state is Authenticated) {
+          // Tampilkan success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Login Berhasil')),
           );
         }
       },
+      // Builder untuk UI
       builder: (context, state) {
+        // Redirect ke home jika authenticated
         if (state is Authenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.pushNamedAndRemoveUntil(
@@ -74,6 +94,7 @@ class _LoginViewState extends State<LoginView> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               height: GlobalVariable.deviceHeight(context),
+              // Background gradient
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -94,6 +115,7 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20.0),
+                        // Logo/Gambar login
                         Center(
                           child: Image.asset(
                             'assets/login.png',
@@ -101,15 +123,18 @@ class _LoginViewState extends State<LoginView> {
                             height: GlobalVariable.deviceWidth(context) * 0.5,
                           ),
                         ),
+                        // Judul form
                         Text(
                           'Form Login',
                           style: Theme.of(context).primaryTextTheme.titleLarge,
                         ),
+                        // Deskripsi
                         Text(
                           'Lengkapi form login untuk bisa menggunakan aplikasi.',
                           style: Theme.of(context).primaryTextTheme.titleSmall,
                         ),
                         const SizedBox(height: 20),
+                        // Form input email
                         FormText(
                           labelText: "Email",
                           hintText: "Masukkan Email anda",
@@ -119,6 +144,7 @@ class _LoginViewState extends State<LoginView> {
                           borderFocusColor: Colors.blue,
                         ),
                         const SizedBox(height: 10),
+                        // Form input password
                         FormText(
                           labelText: "Password",
                           hintText: "Masukkan password anda",
@@ -129,6 +155,7 @@ class _LoginViewState extends State<LoginView> {
                           backgroundColor: Colors.white,
                           borderFocusColor: Colors.blue,
                           obscureText: _obscureText,
+                          // Toggle password visibility
                           suffixIcon: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -143,6 +170,7 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                         const SizedBox(height: 10),
+                        // Link reset password
                         TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, 'resetPassword');
@@ -157,9 +185,10 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                        // Tombol login
                         ButtonElevated(
                           onPress: state is AuthLoading
-                              ? () {} // Fungsi kosong jika sedang loading
+                              ? () {} // Disabled saat loading
                               : () {
                                   if (_formKey.currentState!.validate()) {
                                     authBloc.add(LoginEvent(
@@ -175,6 +204,7 @@ class _LoginViewState extends State<LoginView> {
                       ],
                     ),
                     const Spacer(),
+                    // Link ke halaman register
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.center,
