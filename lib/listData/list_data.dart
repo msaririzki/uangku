@@ -1,24 +1,34 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+/// Widget untuk menampilkan item laporan keuangan dalam bentuk list
+/// dengan fitur slidable untuk edit dan hapus
+/// 
+/// Fitur:
+/// - Menampilkan detail laporan (kategori, tanggal, nominal, keterangan)
+/// - Swipe kiri untuk akses menu edit dan hapus
+/// - Warna nominal sesuai tipe (hijau untuk pemasukan, merah untuk pengeluaran)
+/// - Format nominal dalam Rupiah
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mob3_uas_klp_02/bloc/laporan/laporan_bloc.dart';
 import 'package:mob3_uas_klp_02/global_variable.dart';
 import 'package:mob3_uas_klp_02/widget/dialog.dart';
 
-
-
-
 class ListData extends StatelessWidget {
-  final String? uid;
-  final String kategori;
-  final String? tanggal;
-  final int nominal;
-  final String keterangan;
-  final String tipe;
-  final DateTime? date;
-  final LaporanBloc? bloc1;
-  final LaporanBloc? bloc2;
-  final bool? pageLaporan;
+  // Properties untuk data laporan
+  final String? uid;              // ID unik laporan
+  final String kategori;          // Nama kategori
+  final String? tanggal;          // Tanggal laporan (format string)
+  final int nominal;              // Jumlah uang
+  final String keterangan;        // Catatan tambahan
+  final String tipe;              // Tipe laporan (Pemasukan/Pengeluaran)
+  final DateTime? date;           // Tanggal untuk reload data
+  
+  // BLoC untuk update state
+  final LaporanBloc? bloc1;       // BLoC utama
+  final LaporanBloc? bloc2;       // BLoC kedua (jika ada)
+  
+  // Flag untuk kontrol tampilan
+  final bool? pageLaporan;        // True jika di halaman laporan
 
   const ListData({
     super.key,
@@ -39,11 +49,11 @@ class ListData extends StatelessWidget {
     return Column(children: [
       Slidable(
         key: const ValueKey(0),
+        // Konfigurasi aksi slide dari kiri
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
-          // ketika delete or slidable paling ujung
-          // dismissible: DismissiblePane(onDismissed: () {}),
           children: [
+            // Tombol hapus (merah)
             SlidableAction(
               onPressed: (context) {
                 DialogWidget.deleteLaporan(
@@ -53,6 +63,7 @@ class ListData extends StatelessWidget {
               foregroundColor: Colors.white,
               icon: Icons.delete,
             ),
+            // Tombol edit (biru)
             SlidableAction(
               onPressed: (context) {
                 DialogWidget.editLaporan(
@@ -71,11 +82,14 @@ class ListData extends StatelessWidget {
             ),
           ],
         ),
+        // Nonaktifkan slidable jika di halaman laporan
         enabled: pageLaporan! ? false : true,
+        // Konten utama item
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Kolom kiri: kategori dan tanggal
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
                   kategori,
@@ -90,6 +104,7 @@ class ListData extends StatelessWidget {
                         .copyWith(color: Colors.black26),
                   ),
               ]),
+              // Nominal di kanan dengan warna sesuai tipe
               Text(
                 GlobalVariable.convertToRupiah(nominal),
                 style: Theme.of(context)
@@ -101,6 +116,7 @@ class ListData extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
+          // Keterangan (jika ada)
           if (keterangan.isNotEmpty)
             Text(
               keterangan,
@@ -110,6 +126,7 @@ class ListData extends StatelessWidget {
                   .displaySmall!
                   .copyWith(fontWeight: FontWeight.w300, letterSpacing: 0.4),
             ),
+          // Garis pembatas antar item
           const Divider(
             color: Colors.black54,
             thickness: 1,
