@@ -17,6 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _passwordController = TextEditingController();
   String? _gender;
   DateTime? _birthDate;
+  // ignore: unused_field
   File? _profileImage;
 
   List<String> _avatarList = [

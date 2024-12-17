@@ -35,7 +35,6 @@ class FormDate extends StatelessWidget {
 
         if (pickedDate != null) {
           String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-
           controller.text = formattedDate;
         }
       },
