@@ -1,3 +1,13 @@
+/// Screen untuk menampilkan dan mengelola kategori transaksi
+/// Menampilkan daftar kategori pemasukan dan pengeluaran
+/// 
+/// Fitur:
+/// - Tampilan daftar kategori
+/// - Toggle antara kategori pemasukan dan pengeluaran
+/// - Loading state dengan skeleton
+/// - Error handling
+/// - Maksimal 6 kategori per jenis
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mob3_uas_klp_02/bloc/category/category_bloc.dart';
@@ -11,9 +21,12 @@ class Categorys extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load data kategori pemasukan saat pertama kali dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CategoryBloc>().add(GetCategoryEvent(category: 'Pemasukan'));
     });
+
+    // List skeleton loader untuk animasi loading
     final List<Widget> skeletonLoaders = List.generate(
       6,
       (index) => const Skeletonizer(
@@ -30,33 +43,44 @@ class Categorys extends StatelessWidget {
         withScrollView: true,
         content: Column(
           children: [
+            // Tombol toggle antara Pemasukan dan Pengeluaran
             const ButtonSelect(
               options: ['Pemasukan', 'Pengeluaran'],
               getCategory: true,
             ),
             const SizedBox(height: 20),
+
+            // Consumer untuk menangani state changes
             BlocListener<CategoryBloc, CategoryState>(
               listener: (context, state) {
                 if (state is CategorySuccess) {
+                  // Tampilkan pesan sukses
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                 } else if (state is CategoryError) {
+                  // Tampilkan pesan error
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
+              // Builder untuk UI
               child: BlocBuilder<CategoryBloc, CategoryState>(
                 builder: (context, state) {
+                  // Tampilkan skeleton loader saat loading
                   if (state is CategoryLoading) {
                     return Column(children: skeletonLoaders);
-                  } else if (state is CategoryLoaded) {
+                  } 
+                  // Tampilkan daftar kategori
+                  else if (state is CategoryLoaded) {
                     return state.categories.isEmpty
+                        // Tampilan jika tidak ada kategori
                         ? const Center(
                             child: Text(
                             'Category belum tersedia',
                             style: TextStyle(
                                 color: Colors.black45, fontSize: 20.0),
                           ))
+                        // List kategori yang tersedia
                         : ListView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
@@ -70,7 +94,9 @@ class Categorys extends StatelessWidget {
                               );
                             },
                           );
-                  } else {
+                  } 
+                  // State default
+                  else {
                     return const Center();
                   }
                 },

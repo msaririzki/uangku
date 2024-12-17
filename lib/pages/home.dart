@@ -1,3 +1,13 @@
+/// Screen untuk halaman utama/home aplikasi
+/// Menampilkan kalender dan riwayat transaksi harian
+/// 
+/// Fitur:
+/// - Kalender interaktif
+/// - Tampilan transaksi per hari
+/// - Highlight tanggal yang memiliki transaksi
+/// - Loading state dengan skeleton
+/// - Error handling
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mob3_uas_klp_02/bloc/laporan/laporan_bloc.dart';
@@ -17,18 +27,23 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  // State untuk tanggal
   DateTime _today = DateTime.now();
   DateTime? _selectedDay;
-  final LaporanBloc bloc1 = LaporanBloc();
-  final LaporanBloc bloc2 = LaporanBloc();
+  
+  // Instance BLoC untuk manajemen state
+  final LaporanBloc bloc1 = LaporanBloc(); // Untuk data harian
+  final LaporanBloc bloc2 = LaporanBloc(); // Untuk data bulanan
 
   @override
   void initState() {
+    // Load data awal saat widget dibuat
     bloc1.add(GetWhereDateLaporanEvent(startDate: _today, endDate: _today));
     bloc2.add(SumMonthNominalEvent(date: _today));
     super.initState();
   }
 
+  /// Fungsi untuk mendapatkan list transaksi pada tanggal tertentu
   List<LaporanModel> listOfDayEvents(DateTime day, LaporanState state) {
     if (state is LaporanSumCalculationState) {
       return state.data.where((event) {
@@ -42,8 +57,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    // Range tahun untuk kalender
     final DateTime firstYear = DateTime(_today.year - 1, 1, 1);
     final DateTime lastYear = DateTime(_today.year + 1, 12, 31);
+
+    // List skeleton loader untuk animasi loading
     final List<Widget> skeletonLoaders = List.generate(
       6,
       (index) => const Skeletonizer(
@@ -64,12 +82,14 @@ class _HomeState extends State<Home> {
           clipBehavior: Clip.none,
           alignment: Alignment.topCenter,
           children: [
+            // Konten utama dengan scroll
             Positioned.fill(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(top: 50),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Widget kalender
                     BlocBuilder<LaporanBloc, LaporanState>(
                       bloc: bloc2,
                       builder: (context, state) {
@@ -84,12 +104,14 @@ class _HomeState extends State<Home> {
                           selectedDayPredicate: (day) =>
                               isSameDay(_selectedDay, day),
                           eventLoader: (day) => listOfDayEvents(day, state),
+                          // Handler perubahan bulan
                           onPageChanged: (focusedDay) {
                             setState(() {
                               _today = focusedDay;
                             });
                             bloc2.add(SumMonthNominalEvent(date: focusedDay));
                           },
+                          // Handler pemilihan tanggal
                           onDaySelected: (selectedDay, focusedDay) {
                             if (!isSameDay(_selectedDay, selectedDay)) {
                               setState(() {
@@ -101,7 +123,9 @@ class _HomeState extends State<Home> {
                                   endDate: selectedDay));
                             }
                           },
+                          // Kustomisasi tampilan kalender
                           calendarBuilders: CalendarBuilders(
+                            // Kustomisasi header hari
                             dowBuilder: (context, day) {
                               if (day.weekday == DateTime.sunday) {
                                 final text = DateFormat.E().format(day);
@@ -114,6 +138,7 @@ class _HomeState extends State<Home> {
                               }
                               return null;
                             },
+                            // Kustomisasi tanggal
                             defaultBuilder: (context, day, focusedDay) {
                               if (day.weekday == DateTime.sunday) {
                                 return Center(
@@ -130,6 +155,7 @@ class _HomeState extends State<Home> {
                       },
                     ),
                     const SizedBox(height: 20),
+                    // Judul riwayat
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Text(
@@ -141,12 +167,14 @@ class _HomeState extends State<Home> {
                                 fontWeight: FontWeight.w500, fontSize: 20.0),
                       ),
                     ),
+                    // Daftar transaksi
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Column(
                         children: [
                           BlocConsumer<LaporanBloc, LaporanState>(
                             bloc: bloc1,
+                            // Handler untuk state changes
                             listener: (context, state) {
                               if (state is LaporanError) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -158,6 +186,7 @@ class _HomeState extends State<Home> {
                                 );
                               }
                             },
+                            // Builder untuk UI
                             builder: (context, state) {
                               if (state is LaporanLoading) {
                                 return Column(children: skeletonLoaders);
@@ -207,6 +236,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
+            // Card info di bagian atas
             Positioned(
               top: -20,
               child: CardInfo(bloc: bloc2),

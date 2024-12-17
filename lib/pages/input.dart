@@ -1,3 +1,14 @@
+/// Screen untuk input transaksi baru
+/// Menampilkan form input data transaksi keuangan
+/// 
+/// Fitur:
+/// - Form input lengkap (tanggal, kategori, keterangan, nominal)
+/// - Validasi input
+/// - Toggle kategori pemasukan/pengeluaran
+/// - Format nominal otomatis
+/// - Loading state
+/// - Error handling
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -17,11 +28,18 @@ class Input extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load daftar kategori pemasukan saat pertama kali dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CategoryBloc>().add(GetCategoryEvent(category: 'Pemasukan'));
     });
+
+    // Key untuk validasi form
     final formKey = GlobalKey<FormState>();
+    
+    // Variable untuk menyimpan kategori yang dipilih
     late String category;
+    
+    // Controller untuk input fields
     final TextEditingController dateController = TextEditingController();
     final TextEditingController keteranganController = TextEditingController();
     final TextEditingController nominalController = TextEditingController();
@@ -30,8 +48,10 @@ class Input extends StatelessWidget {
         body: Templete(
       content: Form(
           key: formKey,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, 
+              children: [
+            // Judul form
             Text(
               'Form input data',
               style: Theme.of(context)
@@ -40,13 +60,13 @@ class Input extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
+            // Deskripsi form dengan tanda wajib (*)
             RichText(
               text: TextSpan(
                 style: Theme.of(context).primaryTextTheme.displayMedium,
                 children: const [
                   TextSpan(
-                    text:
-                        'Isi form ini untuk menginput laporan keuangan. Tanda',
+                    text: 'Isi form ini untuk menginput laporan keuangan. Tanda',
                   ),
                   TextSpan(
                     text: ' * ',
@@ -59,128 +79,150 @@ class Input extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Toggle Pemasukan/Pengeluaran
             const ButtonSelect(
               options: ['Pemasukan', 'Pengeluaran'],
               getCategory: true,
             ),
             const SizedBox(height: 15),
-            BlocConsumer<LaporanBloc, LaporanState>(listener: (context, state) {
-              if (state is LaporanSuccess) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message)));
-              } else if (state is LaporanError) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message)));
-              }
-            }, builder: (context, state) {
-              if (state is LaporanLoading) {
-                return const Column(children: [
-                  SizedBox(
-                    height: 50.0,
-                  ),
-                  Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ]);
-              }
 
-              return Column(
-                children: [
-                  FormDate(
-                      labelText: 'Tanggal *',
+            // Form input dengan state management
+            BlocConsumer<LaporanBloc, LaporanState>(
+              // Handler untuk state changes
+              listener: (context, state) {
+                if (state is LaporanSuccess) {
+                  // Tampilkan pesan sukses
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.message)));
+                } else if (state is LaporanError) {
+                  // Tampilkan pesan error
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.message)));
+                }
+              },
+              // Builder untuk UI
+              builder: (context, state) {
+                // Tampilkan loading indicator
+                if (state is LaporanLoading) {
+                  return const Column(children: [
+                    SizedBox(height: 50.0),
+                    Center(child: CircularProgressIndicator()),
+                  ]);
+                }
+
+                return Column(
+                  children: [
+                    // Input tanggal dengan validasi
+                    FormDate(
+                        labelText: 'Tanggal *',
+                        hintText: '',
+                        controller: dateController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Tanggal tidak boleh kosong';
+                          }
+                          DateTime selectedDate =
+                              DateFormat('dd-MM-yyyy').parse(value);
+                          if (selectedDate.isAfter(DateTime.now())) {
+                            return 'Transaksi tidak boleh dilakukan di masa depan';
+                          }
+                          return null;
+                        }),
+                    const SizedBox(height: 15),
+
+                    // Dropdown pilihan kategori
+                    BlocBuilder<CategoryBloc, CategoryState>(
+                      builder: (context, state) {
+                        if (state is CategoryError) {
+                          return Text(state.message);
+                        } else if (state is CategoryLoaded) {
+                          // Siapkan list nama kategori
+                          List<String> categoryNames = state.categories
+                              .map((category) => category.name)
+                              .toList();
+                          category =
+                              categoryNames.isNotEmpty ? categoryNames.first : '';
+
+                          return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Dropdown kategori
+                                FormSelect(
+                                  list: categoryNames,
+                                  onChanged: (String? value) {
+                                    category = value!;
+                                  },
+                                ),
+                                // Pesan jika belum ada kategori
+                                if (categoryNames.isEmpty)
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      'Buat kategori dahulu!',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  )
+                              ]);
+                        }
+                        return const Center();
+                      },
+                    ),
+                    const SizedBox(height: 15),
+
+                    // Input keterangan (opsional)
+                    FormText(
+                      labelText: 'Keterangan',
                       hintText: '',
-                      controller: dateController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Tanggal tidak boleh kosong';
-                        }
-                        DateTime selectedDate =
-                            DateFormat('dd-MM-yyyy').parse(value);
-                        if (selectedDate.isAfter(DateTime.now())) {
-                          return 'Transaksi tidak boleh dilakukan di masa depan';
-                        }
-                        return null; // Valid
-                      }),
-                  const SizedBox(height: 15),
-                  BlocBuilder<CategoryBloc, CategoryState>(
-                    builder: (context, state) {
-                      if (state is CategoryError) {
-                        return Text(state.message);
-                      } else if (state is CategoryLoaded) {
-                        List<String> categoryNames = state.categories
-                            .map((category) => category.name)
-                            .toList();
-                        category =
-                            categoryNames.isNotEmpty ? categoryNames.first : '';
+                      required: false,
+                      controller: keteranganController,
+                    ),
+                    const SizedBox(height: 15),
 
-                        return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              FormSelect(
-                                list: categoryNames,
-                                onChanged: (String? value) {
-                                  category = value!;
-                                },
-                              ),
-                              if (categoryNames.isEmpty)
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    'Buat kategori dahulu!',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                )
-                            ]);
-                      }
+                    // Input nominal dengan format currency
+                    FormNumber(
+                      labelText: 'Nominal *',
+                      hintText: '',
+                      currency: true,
+                      controller: nominalController,
+                      inputActionDone: true,
+                    ),
+                    const SizedBox(height: 30),
 
-                      return const Center();
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  FormText(
-                    labelText: 'Keterangan',
-                    hintText: '',
-                    required: false,
-                    controller: keteranganController,
-                  ),
-                  const SizedBox(height: 15),
-                  FormNumber(
-                    labelText: 'Nominal *',
-                    hintText: '',
-                    currency: true,
-                    controller: nominalController,
-                    inputActionDone: true,
-                  ),
-                  const SizedBox(height: 30),
-                  ButtonElevated(
-                      text: "Simpan Data",
-                      onPress: () {
-                        if (formKey.currentState!.validate()) {
-                          DateTime dateTime = DateFormat('dd-MM-yyyy')
-                              .parse(dateController.text);
-                          int nominalInt = int.parse(nominalController.text
-                              .replaceAll(RegExp(r'[^0-9]'), ''));
+                    // Tombol submit
+                    ButtonElevated(
+                        text: "Simpan Data",
+                        onPress: () {
+                          if (formKey.currentState!.validate()) {
+                            // Parse tanggal dari string
+                            DateTime dateTime = DateFormat('dd-MM-yyyy')
+                                .parse(dateController.text);
+                            // Parse nominal dari string dengan format currency
+                            int nominalInt = int.parse(nominalController.text
+                                .replaceAll(RegExp(r'[^0-9]'), ''));
 
-                          final model = LaporanModel(
-                              nominal: nominalInt,
-                              keterangan: keteranganController.text,
-                              categoryName: category,
-                              tanggal: dateTime,
-                              createdAt: DateTime.now());
+                            // Buat model laporan
+                            final model = LaporanModel(
+                                nominal: nominalInt,
+                                keterangan: keteranganController.text,
+                                categoryName: category,
+                                tanggal: dateTime,
+                                createdAt: DateTime.now());
 
-                          context
-                              .read<LaporanBloc>()
-                              .add(CreateLaporanEvent(model: model));
+                            // Trigger event create laporan
+                            context
+                                .read<LaporanBloc>()
+                                .add(CreateLaporanEvent(model: model));
 
-                          dateController.clear();
-                          keteranganController.clear();
-                          nominalController.clear();
-                        }
-                      })
-                ],
-              );
-            }),
+                            // Reset form
+                            dateController.clear();
+                            keteranganController.clear();
+                            nominalController.clear();
+                          }
+                        })
+                  ],
+                );
+              }),
           ])),
     ));
   }
