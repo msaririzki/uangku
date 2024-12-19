@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -325,6 +326,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SnackBar(
                             content: Text('Perubahan berhasil disimpan!')),
                       );
+
+                      // Simpan avatar yang dipilih ke SharedPreferences
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('selectedAvatar', _selectedAvatar ?? '');
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(

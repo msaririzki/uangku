@@ -47,15 +47,15 @@ class _NavbarState extends State<Navbar> {
             child: Row(
               children: [
                 CircleAvatar(
-  radius: 20,
-  backgroundColor: Colors.grey[300],
-  backgroundImage: selectedAvatar != null
-      ? AssetImage(selectedAvatar!)
-      : null,
-  child: selectedAvatar == null
-      ? const Icon(Icons.person, size: 20, color: Colors.grey)
-      : null,
-),
+                  radius: 20,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage: selectedAvatar != null
+                      ? AssetImage(selectedAvatar!)
+                      : null,
+                  child: selectedAvatar == null
+                      ? const Icon(Icons.person, size: 20, color: Colors.grey)
+                      : null,
+                ),
                 const SizedBox(width: 10),
                 Text(
                   name,
