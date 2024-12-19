@@ -69,20 +69,24 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime now = DateTime.now();
-    final DateTime tenYearsAgo = DateTime(now.year - 10, now.month, now.day);
-    final DateTime? picked = await showDatePicker(
+  Future<void> _testDialog(BuildContext context) async {
+    showDialog(
       context: context,
-      initialDate: _birthDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: tenYearsAgo,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Test Dialog"),
+          content: Text("Ini adalah dialog uji coba."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Tutup"),
+            ),
+          ],
+        );
+      },
     );
-    if (picked != null && picked != _birthDate) {
-      setState(() {
-        _birthDate = picked;
-      });
-    }
   }
 
   Future<void> _pickImage() async {
@@ -119,6 +123,28 @@ class _ProfilePageState extends State<ProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: $e')),
       );
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    print("Memanggil _selectDate"); // Log untuk memastikan fungsi dipanggil
+    final DateTime now = DateTime.now();
+    final DateTime firstDate = DateTime(2000); // Tanggal awal yang lebih sederhana
+    final DateTime lastDate = DateTime(2025); // Tanggal akhir yang lebih sederhana
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _birthDate ?? now,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    if (picked != null && picked != _birthDate) {
+      setState(() {
+        _birthDate = picked;
+      });
+      print("Tanggal yang dipilih: ${_birthDate}"); // Log untuk melihat tanggal yang dipilih
+    } else {
+      print("Tidak ada tanggal yang dipilih"); // Log jika tidak ada tanggal yang dipilih
     }
   }
 
@@ -250,7 +276,10 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 20),
               InkWell(
-                onTap: () => _selectDate(context),
+                onTap: () {
+                  print("Area pemilihan tanggal diketuk");
+                  _selectDate(context); // Pastikan ini dipanggil
+                },
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
