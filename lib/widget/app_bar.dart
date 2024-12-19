@@ -23,7 +23,7 @@ class _NavbarState extends State<Navbar> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      name = prefs.getString('name') ?? ''; // Default ke string kosong
+      name = prefs.getString('name') ?? ''; // Memuat nama pengguna
       selectedAvatar = prefs.getString('selectedAvatar'); // Load avatar yang dipilih
     });
     debugPrint('Selected Avatar: $selectedAvatar'); // Log untuk debugging

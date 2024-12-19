@@ -16,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   String? _gender;
   DateTime? _birthDate;
   // ignore: unused_field
@@ -52,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _gender = doc['gender'];
             _birthDate = (doc['birthDate'] as Timestamp?)?.toDate();
             _selectedAvatar = doc['avatar'];
-            // Jika ada field lain, tambahkan di sini
+            _nameController.text = doc['name'] ?? '';
           });
         }
       }
@@ -67,6 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void dispose() {
     _phoneController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -130,8 +132,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _selectDate(BuildContext context) async {
     print("Memanggil _selectDate"); // Log untuk memastikan fungsi dipanggil
     final DateTime now = DateTime.now();
-    final DateTime firstDate = DateTime(2000); // Tanggal awal yang lebih sederhana
-    final DateTime lastDate = DateTime(2025); // Tanggal akhir yang lebih sederhana
+    final DateTime firstDate =
+        DateTime(2000); // Tanggal awal yang lebih sederhana
+    final DateTime lastDate =
+        DateTime(2025); // Tanggal akhir yang lebih sederhana
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _birthDate ?? now,
@@ -143,9 +147,11 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _birthDate = picked;
       });
-      print("Tanggal yang dipilih: ${_birthDate}"); // Log untuk melihat tanggal yang dipilih
+      print(
+          "Tanggal yang dipilih: ${_birthDate}"); // Log untuk melihat tanggal yang dipilih
     } else {
-      print("Tidak ada tanggal yang dipilih"); // Log jika tidak ada tanggal yang dipilih
+      print(
+          "Tidak ada tanggal yang dipilih"); // Log jika tidak ada tanggal yang dipilih
     }
   }
 
@@ -216,6 +222,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     _selectedAvatar = value;
                   });
                 },
+              ),
+              const SizedBox(height: 20),
+              // Kolom untuk mengganti nama pengguna
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Nama Pengguna',
+                  hintText: 'Masukkan nama pengguna Anda',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.person),
+                ),
+                textInputAction: TextInputAction.done,
               ),
               const SizedBox(height: 20),
               Text(
@@ -306,9 +328,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () async {
-                  // Tambahkan logika untuk menyimpan perubahan
                   try {
-                    // Ambil UID pengguna yang sedang login
                     final user = FirebaseAuth.instance.currentUser;
                     if (user != null) {
                       // Update data pengguna di Firestore
@@ -320,16 +340,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         'gender': _gender,
                         'birthDate': _birthDate,
                         'avatar': _selectedAvatar ?? '',
-                        // Tambahkan field lain yang ingin disimpan
+                        'name': _nameController.text, // Simpan nama pengguna,
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Perubahan berhasil disimpan!')),
-                      );
 
-                      // Simpan avatar yang dipilih ke SharedPreferences
+                      // Simpan nama pengguna ke SharedPreferences
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('selectedAvatar', _selectedAvatar ?? '');
+                      await prefs.setString('name', _nameController.text); // Simpan nama pengguna
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Perubahan berhasil disimpan!')),
+                      );
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
