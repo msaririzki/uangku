@@ -239,11 +239,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 textInputAction: TextInputAction.done,
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Nama Pengguna',
-                style: Theme.of(context).primaryTextTheme.titleLarge,
-              ),
+              // const SizedBox(height: 20),
+              // Text(
+              //   'Nama Pengguna',
+              //   style: Theme.of(context).primaryTextTheme.titleLarge,
+              // ),
               const SizedBox(height: 20),
               TextField(
                 controller: _phoneController,
@@ -345,10 +345,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       // Simpan nama pengguna ke SharedPreferences
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('name', _nameController.text); // Simpan nama pengguna
+                      await prefs.setString(
+                          'name', _nameController.text); // Simpan nama pengguna
+                      await prefs.setString('selectedAvatar',
+                          _selectedAvatar ?? ''); // Simpan avatar yang dipilih
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Perubahan berhasil disimpan!')),
+                        const SnackBar(
+                            content: Text('Perubahan berhasil disimpan!')),
                       );
                     }
                   } catch (e) {
