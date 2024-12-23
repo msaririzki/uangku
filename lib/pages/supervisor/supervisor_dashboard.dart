@@ -82,89 +82,72 @@ class _SupervisorDashboardState extends State<SupervisorDashboard> {
           ),
         ],
       ),
-      body: Padding(
+      body: Container(
+        color: Colors.grey[200], // Warna latar belakang yang lebih lembut
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               // Kartu untuk jumlah pengguna
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text('Jumlah Pengguna',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Text('$userCount',
-                          style: TextStyle(
-                              fontSize: 36, color: Colors.blueAccent)),
-                    ],
-                  ),
-                ),
-              ),
+              _buildInfoCard('Jumlah Pengguna', '$userCount', Icons.people, Colors.blueAccent),
               SizedBox(height: 20),
               // Kartu untuk jumlah pengguna online
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text('Jumlah Pengguna Online',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Text('$onlineUserCount',
-                          style: TextStyle(fontSize: 36, color: Colors.green)),
-                    ],
-                  ),
-                ),
-              ),
+              _buildInfoCard('Jumlah Pengguna Online', '$onlineUserCount', Icons.online_prediction, Colors.green),
               SizedBox(height: 20),
               // Kartu untuk jumlah pengguna offline
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text('Jumlah Pengguna Offline',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Text('$offlineUserCount',
-                          style: TextStyle(fontSize: 36, color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ),
+              _buildInfoCard('Jumlah Pengguna Offline', '$offlineUserCount', Icons.offline_bolt, Colors.red),
               SizedBox(height: 20),
               // Kartu untuk transaksi
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text('Transaksi',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Text('Hari Ini: $dailyTransactions',
-                          style: TextStyle(fontSize: 18)),
-                      Text('Minggu Ini: $weeklyTransactions',
-                          style: TextStyle(fontSize: 18)),
-                      Text('Bulan Ini: $monthlyTransactions',
-                          style: TextStyle(fontSize: 18)),
-                    ],
-                  ),
-                ),
-              ),
+              _buildTransactionCard(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(String title, String value, IconData icon, Color color) {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 40, color: color),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5),
+                    Text(value, style: TextStyle(fontSize: 36, color: color)),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionCard() {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Transaksi', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            Text('Hari Ini: $dailyTransactions', style: TextStyle(fontSize: 18)),
+            Text('Minggu Ini: $weeklyTransactions', style: TextStyle(fontSize: 18)),
+            Text('Bulan Ini: $monthlyTransactions', style: TextStyle(fontSize: 18)),
+          ],
         ),
       ),
     );
