@@ -1,6 +1,6 @@
 /// Screen untuk login pengguna
 /// Menggunakan BLoC pattern untuk manajemen state
-/// 
+///
 /// Fitur:
 /// - Form login (email & password)
 /// - Validasi input
@@ -62,7 +62,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthBloc>(context);
-    
+
     return BlocConsumer<AuthBloc, AuthState>(
       // Handler untuk state changes
       listener: (context, state) {
@@ -84,8 +84,14 @@ class _LoginViewState extends State<LoginView> {
         // Redirect ke home jika authenticated
         if (state is Authenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushNamedAndRemoveUntil(
-                context, 'userPage', (Route<dynamic> route) => false);
+            // Redirect berdasarkan role
+            if (state.role == 'Admin') {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, 'adminDashboard', (Route<dynamic> route) => false);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, 'userPage', (Route<dynamic> route) => false);
+            }
           });
         }
 

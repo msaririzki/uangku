@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mob3_uas_klp_02/pages/admin/admin_dashboard.dart';
 import 'package:mob3_uas_klp_02/pages/auth/login.dart';
 import 'package:mob3_uas_klp_02/pages/auth/register.dart';
 import 'package:mob3_uas_klp_02/pages/auth/resetPasword.dart';
@@ -45,13 +46,15 @@ class MyApp extends StatelessWidget {
       initialRoute: '/', // Rute awal aplikasi
       // Konfigurasi routing aplikasi
       routes: {
-        '/': (context) => const Splash(),           // Splash screen
-        'intro': (context) => const Intro(),        // Intro/onboarding
-        'login': (context) => const Login(),        // Halaman login
-        'register': (context) => const Register(),  // Halaman registrasi
+        '/': (context) => const Splash(), // Splash screen
+        'intro': (context) => const Intro(), // Intro/onboarding
+        'login': (context) => const Login(), // Halaman login
+        'register': (context) => const Register(), // Halaman registrasi
         'userPage': (context) => const BottomBar(), // Halaman utama
-        'reconnect': (context) => const Reconnect(),// Halaman error koneksi
-        'resetPassword': (context) => const ResetPasswordScreen(), // Reset password
+        'reconnect': (context) => const Reconnect(), // Halaman error koneksi
+        'resetPassword': (context) =>
+            const ResetPasswordScreen(), // Reset password
+        'adminDashboard': (context) => AdminDashboard(),
       },
     );
   }

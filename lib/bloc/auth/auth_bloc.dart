@@ -1,6 +1,6 @@
 /// File ini berisi implementasi AuthBloc yang menangani seluruh logika autentikasi
 /// menggunakan BLoC (Business Logic Component) pattern.
-/// 
+///
 /// AuthBloc mengelola:
 /// - Login/Logout
 /// - Registrasi
@@ -43,8 +43,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // Memeriksa apakah token masih valid dan belum expired
         if (await isTokenValid()) {
           if (user != null) {
+            // Ambil data user dari Firestore untuk mendapatkan role
+            DocumentSnapshot userDoc =
+                await db.collection('users').doc(user!.uid).get();
+            String role =
+                userDoc['role'] ?? 'User'; // Mendefinisikan 'role' di sini
+
             // User terautentikasi dan token valid
-            emit(Authenticated(user));
+            emit(Authenticated(user, role));
           } else {
             // Tidak ada user yang login
             emit(UnAuthenticated());
@@ -63,31 +69,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     /// Handler untuk LoginEvent
     /// Menangani proses login user dengan email dan password
     on<LoginEvent>((event, emit) async {
-      // Ubah state menjadi loading selama proses login
       emit(AuthLoading());
 
       try {
-        // Mencoba melakukan login dengan Firebase Auth
         final userCredential = await _auth.signInWithEmailAndPassword(
             email: event.email.trim(), password: event.password.trim());
 
         User? user = userCredential.user;
 
         if (user != null) {
-          // Login berhasil:
-          // 1. Generate dan simpan token
-          // 2. Simpan data user ke local storage
-          await generateToken(user);
-          emit(Authenticated(user));
+          // Ambil data user dari Firestore untuk mendapatkan role
+          DocumentSnapshot userDoc =
+              await db.collection('users').doc(user.uid).get();
+          String role = userDoc['role'] ??
+              'User'; // Default ke 'User' jika tidak ada role
+
+          // Simpan role ke dalam state
+          emit(Authenticated(user, role));
         } else {
-          // Login gagal - tidak ada user yang terautentikasi
           emit(UnAuthenticated());
         }
       } catch (e) {
-        // Tangani error login:
-        // - Email/password salah
-        // - Format email tidak valid
-        // - Network error
         String errorMessage = 'Error';
         if (e is FirebaseAuthException) {
           errorMessage = validate(e);
@@ -113,17 +115,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (user != null) {
           // Registrasi berhasil:
           // 1. Simpan data lengkap user ke Firestore
-          await db.collection("users").doc(user.uid).set({
-            'uid': user.uid,
-            'email': user.email,
-            'phone': event.user.phone.toString(),
-            'name': event.user.name.toString(),
-            'created_at': DateTime.now()
-          });
+          try {
+            await db.collection("users").doc(user.uid).set({
+              'uid': user.uid,
+              'email': user.email,
+              'phone': event.user.phone.toString(),
+              'name': event.user.name.toString(),
+              'role': 'User',
+              'created_at': DateTime.now()
+            });
+          } catch (e) {
+            emit(AuthenticatedError(
+                message: 'Gagal menyimpan data pengguna: ${e.toString()}'));
+            return; // Keluar dari fungsi jika terjadi kesalahan
+          }
 
           // 2. Generate token dan simpan data user ke local storage
           await generateToken(user);
-          emit(Authenticated(user));
+          // Mendapatkan role dari Firestore setelah registrasi
+          DocumentSnapshot userDoc =
+              await db.collection('users').doc(user.uid).get();
+          String role =
+              userDoc['role'] ?? 'User'; // Mendefinisikan 'role' di sini
+          emit(Authenticated(user, role));
         } else {
           // Registrasi gagal
           emit(UnAuthenticated());
@@ -177,7 +191,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain.';
         break;
       case 'invalid-email':
-        errorMessage = 'Email tidak valid. Silakan periksa kembali format email.';
+        errorMessage =
+            'Email tidak valid. Silakan periksa kembali format email.';
         break;
       case 'weak-password':
         errorMessage =
@@ -204,7 +219,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> generateToken(user) async {
     // Inisialisasi SharedPreferences untuk penyimpanan lokal
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Dapatkan token dari Firebase Auth
     final token = await user.getIdToken();
 
