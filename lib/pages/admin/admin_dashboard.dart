@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminDashboard extends StatefulWidget {
   @override
@@ -31,9 +32,33 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   void createSupervisorAccount(
       String email, String password, String name) async {
-    // Logika untuk membuat akun pengawas
-    // Misalnya, menggunakan Firebase Auth untuk membuat akun baru
-    // dan menyimpan data ke Firestore
+    try {
+      // Buat akun dengan Firebase Authentication
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Simpan data pengguna ke Firestore dengan role 'Supervisor'
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'email': email,
+        'name': name,
+        'role': 'Supervisor', // Role diatur sebagai 'Supervisor'
+        'status': 'offline', // Status default
+      });
+
+      // Tampilkan pesan sukses
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Akun pengawas berhasil dibuat')));
+    } catch (e) {
+      // Tangani error
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Gagal membuat akun: $e')));
+    }
   }
 
   @override
@@ -41,6 +66,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard Admin'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacementNamed(
+                  context, 'login'); // Ganti dengan rute login Anda
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

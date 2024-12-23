@@ -88,6 +88,9 @@ class _LoginViewState extends State<LoginView> {
             if (state.role == 'Admin') {
               Navigator.pushNamedAndRemoveUntil(
                   context, 'adminDashboard', (Route<dynamic> route) => false);
+            } else if (state.role == 'Supervisor') {
+              Navigator.pushNamedAndRemoveUntil(context, 'supervisorDashboard',
+                  (Route<dynamic> route) => false);
             } else {
               Navigator.pushNamedAndRemoveUntil(
                   context, 'userPage', (Route<dynamic> route) => false);

@@ -10,6 +10,7 @@ import 'package:mob3_uas_klp_02/pages/auth/resetPasword.dart';
 import 'package:mob3_uas_klp_02/pages/intro.dart';
 import 'package:mob3_uas_klp_02/pages/reconnect.dart';
 import 'package:mob3_uas_klp_02/pages/splash.dart';
+import 'package:mob3_uas_klp_02/pages/supervisor/supervisor_dashboard.dart';
 import 'package:mob3_uas_klp_02/widget/bottom_bar.dart';
 import 'firebase_options.dart';
 
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         'resetPassword': (context) =>
             const ResetPasswordScreen(), // Reset password
         'adminDashboard': (context) => AdminDashboard(),
+        'supervisorDashboard': (context) => SupervisorDashboard(), // Tambahkan rute untuk SupervisorDashboard
       },
     );
   }
