@@ -23,15 +23,54 @@ class _SupervisorDashboardState extends State<SupervisorDashboard> {
   }
 
   Future<void> fetchUserCounts() async {
-    final userCollection = FirebaseFirestore.instance.collection('users');
-    final userSnapshot = await userCollection.get();
+    try {
+      final userCollection = FirebaseFirestore.instance.collection('users');
+      final userSnapshot = await userCollection.get();
 
-    setState(() {
-      userCount = userSnapshot.docs.length;
-      onlineUserCount =
-          userSnapshot.docs.where((doc) => doc['status'] == 'online').length;
-      offlineUserCount = userCount - onlineUserCount; // Hitung pengguna offline
-    });
+      print('Jumlah pengguna: ${userSnapshot.docs.length}'); // Debugging
+      userSnapshot.docs.forEach((doc) {
+        if (doc.data().containsKey('status')) {
+          print('Pengguna: ${doc.id}, Status: ${doc['status']}'); // Debugging
+        } else {
+          print('Pengguna: ${doc.id} tidak memiliki field status'); // Debugging
+        }
+      });
+
+      setState(() {
+        userCount = userSnapshot.docs.length;
+
+        // Hitung pengguna online
+        onlineUserCount = userSnapshot.docs
+            .where((doc) =>
+                doc.data().containsKey('status') && doc['status'] == 'online')
+            .length;
+
+        // Hitung pengguna offline
+        offlineUserCount = userSnapshot.docs
+            .where((doc) =>
+                doc.data().containsKey('status') && doc['status'] == 'offline')
+            .length;
+
+        // Tambahkan pengguna yang tidak memiliki status sebagai offline
+        offlineUserCount += userSnapshot.docs
+            .where((doc) => !doc.data().containsKey('status'))
+            .length;
+
+        // Jika ada pengguna yang tidak memiliki status, anggap mereka offline
+        if (userSnapshot.docs.any((doc) => !doc.data().containsKey('status'))) {
+          print('Mengatur pengguna tanpa status sebagai offline');
+        }
+
+        // Jika ada pengguna yang seharusnya online, atur mereka sebagai online
+        if (userSnapshot.docs.any((doc) =>
+            doc.data().containsKey('status') && doc['status'] == 'online')) {
+          print('Ada pengguna yang sudah online');
+        }
+      });
+    } catch (e) {
+      print(
+          'Error fetching user counts: $e'); // Menampilkan kesalahan di console
+    }
   }
 
   Future<void> fetchTransactionCounts() async {

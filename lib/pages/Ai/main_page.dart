@@ -52,9 +52,15 @@ class _AiPageState extends State<AiPage> {
               children: [
                 TextField(
                   controller: textEditingController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Ketik apa yang anda mau',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.green, width: 2),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.all(10),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -62,11 +68,22 @@ class _AiPageState extends State<AiPage> {
                   width: double.infinity,
                   height: 100,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
                     color: image == null
                         ? Color.fromARGB(255, 255, 255, 255)
                         : null,
                     image: image != null
-                        ? DecorationImage(image: FileImage(File(image!.path)))
+                        ? DecorationImage(
+                            image: FileImage(File(image!.path)),
+                            fit: BoxFit.cover)
                         : null,
                   ),
                 ),
@@ -74,6 +91,13 @@ class _AiPageState extends State<AiPage> {
                 ElevatedButton(
                   onPressed: _pickImage,
                   child: const Text('Ambil/Unggah Gambar'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green, // background
+                    foregroundColor: Colors.white, // foreground
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
                 image != null
                     ? ElevatedButton(
@@ -123,6 +147,13 @@ class _AiPageState extends State<AiPage> {
                   child: isLoading
                       ? CircularProgressIndicator()
                       : const Text('Kirim'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue, // background
+                    foregroundColor: Colors.white, // foreground
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(answer),

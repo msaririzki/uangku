@@ -148,7 +148,7 @@ Widget build(BuildContext context) {
             NavigationDestination(
               selectedIcon: Icon(Icons.computer),
               icon: Icon(Icons.computer_outlined),
-              label: 'Kecerdasan Buatan',
+              label: 'AI',
             ),
           ],
         ),
