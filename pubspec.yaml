@@ -13,6 +13,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.1.2
+  google_generative_ai: ^0.4.3
   cupertino_icons: ^1.0.8
   bloc: ^8.1.4
   cloud_firestore: ^5.2.1
@@ -39,6 +41,8 @@ flutter_launcher_icons:
   image_path_ios: "assets/logo_app.png"
   ios: true
   min_sdk_android: 21
+  
+  # http: ^0.13.4
 
   cupertino_icons: ^1.0.8
 

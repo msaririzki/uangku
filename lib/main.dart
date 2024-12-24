@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mob3_uas_klp_02/pages/Ai/main_page.dart';
 import 'package:mob3_uas_klp_02/pages/admin/admin_dashboard.dart';
 import 'package:mob3_uas_klp_02/pages/auth/login.dart';
 import 'package:mob3_uas_klp_02/pages/auth/register.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
             const ResetPasswordScreen(), // Reset password
         'adminDashboard': (context) => AdminDashboard(),
         'supervisorDashboard': (context) => SupervisorDashboard(), // Tambahkan rute untuk SupervisorDashboard
+        'Kecerdasan Buatan': (context) => AiPage(), // Tambahkan rute untuk KecerdasanBuatan
       },
     );
   }
