@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mob3_uas_klp_02/pages/Ai/variable_umum.dart';
 
 class AiPage extends StatefulWidget {
+  // Konstruktor untuk AiPage
   const AiPage({Key? key}) : super(key: key);
 
   @override
@@ -12,12 +13,14 @@ class AiPage extends StatefulWidget {
 }
 
 class _AiPageState extends State<AiPage> {
+  // Kontroler untuk TextField
   TextEditingController textEditingController = TextEditingController();
-  String answer = '';
-  XFile? image;
-  bool isLoading = false;
-  bool showHistory = false;
-  List<Map<String, String>> history = [];
+  String answer = ''; // Menyimpan jawaban dari AI
+  XFile? image; // Menyimpan gambar yang dipilih
+  bool isLoading = false; // Status loading saat mengirim permintaan
+  bool showHistory = false; // Status untuk menampilkan riwayat
+  List<Map<String, String>> history =
+      []; // Menyimpan riwayat pertanyaan dan jawaban
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class _AiPageState extends State<AiPage> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.green, Colors.yellow],
+              colors: [Colors.green, Colors.yellow], // Warna gradien
             ),
           ),
         ),
@@ -37,6 +40,7 @@ class _AiPageState extends State<AiPage> {
           IconButton(
             icon: Icon(Icons.history),
             onPressed: () {
+              // Mengubah status untuk menampilkan atau menyembunyikan riwayat
               setState(() {
                 showHistory = !showHistory;
               });
@@ -53,7 +57,7 @@ class _AiPageState extends State<AiPage> {
                 TextField(
                   controller: textEditingController,
                   decoration: InputDecoration(
-                    hintText: 'Ketik apa yang anda mau',
+                    hintText: 'Ketik apa yang anda mau', // Placeholder
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Colors.green, width: 2),
@@ -74,7 +78,7 @@ class _AiPageState extends State<AiPage> {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 2,
                         blurRadius: 5,
-                        offset: Offset(0, 3), // changes position of shadow
+                        offset: Offset(0, 3), // Mengubah posisi bayangan
                       ),
                     ],
                     color: image == null
@@ -89,11 +93,12 @@ class _AiPageState extends State<AiPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _pickImage,
+                  onPressed:
+                      _pickImage, // Memanggil fungsi untuk memilih gambar
                   child: const Text('Ambil/Unggah Gambar'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green, // background
-                    foregroundColor: Colors.white, // foreground
+                    backgroundColor: Colors.green, // Warna latar belakang
+                    foregroundColor: Colors.white, // Warna teks
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -102,6 +107,7 @@ class _AiPageState extends State<AiPage> {
                 image != null
                     ? ElevatedButton(
                         onPressed: () {
+                          // Menghapus gambar yang dipilih
                           setState(() {
                             image = null;
                           });
@@ -122,8 +128,9 @@ class _AiPageState extends State<AiPage> {
                     : const SizedBox(),
                 ElevatedButton(
                   onPressed: () {
+                    // Mengirim permintaan ke model AI
                     setState(() {
-                      isLoading = true;
+                      isLoading = true; // Mengubah status loading
                     });
 
                     GenerativeModel model = GenerativeModel(
@@ -141,22 +148,22 @@ class _AiPageState extends State<AiPage> {
                             'question': textEditingController.text,
                             'answer': answer,
                           });
-                          isLoading = false;
+                          isLoading = false; // Mengubah status loading
                         }));
                   },
                   child: isLoading
-                      ? CircularProgressIndicator()
+                      ? CircularProgressIndicator() // Menampilkan indikator loading
                       : const Text('Kirim'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue, // background
-                    foregroundColor: Colors.white, // foreground
+                    backgroundColor: Colors.blue, // Warna latar belakang
+                    foregroundColor: Colors.white, // Warna teks
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(answer),
+                Text(answer), // Menampilkan jawaban
               ],
             ),
           ),
@@ -164,21 +171,19 @@ class _AiPageState extends State<AiPage> {
             Positioned.fill(
               child: GestureDetector(
                 onTap: () {
-                  //deteksi sentuhan
+                  // Menyembunyikan riwayat saat area di luar riwayat ditekan
                   setState(() {
                     showHistory = false;
                   });
                 },
                 child: Container(
-                  //Menyusun tampilan dari riwayat percakapan
-                  color: Colors.black54,
+                  color: Colors.black54, // Warna latar belakang riwayat
                   child: Center(
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.8,
                       color: Colors.white,
                       child: ListView(
-                        //Menyusun tampilan dari riwayat percakapan
                         padding: EdgeInsets.all(20),
                         children: history
                             .map((entry) => ListTile(
@@ -198,15 +203,13 @@ class _AiPageState extends State<AiPage> {
   }
 
   Future<void> _pickImage() async {
-    //mengambil gambar,blok code lain selama proses
+    // Mengambil gambar dari kamera atau galeri
     showModalBottomSheet(
-      //membuat modal bottom sheet dari bawah
       context: context,
       builder: (context) => SafeArea(
         child: Wrap(
           children: <Widget>[
             ListTile(
-              //Menampilkan opsi dalam bentuk daftar dengan ikon dan teks
               leading: Icon(Icons.camera_alt),
               title: Text('Ambil dari Kamera'),
               onTap: () async {
@@ -215,7 +218,7 @@ class _AiPageState extends State<AiPage> {
                   source: ImageSource.camera,
                 );
                 setState(() {
-                  image = pickedFile;
+                  image = pickedFile; // Menyimpan gambar yang dipilih
                 });
               },
             ),
@@ -228,7 +231,7 @@ class _AiPageState extends State<AiPage> {
                   source: ImageSource.gallery,
                 );
                 setState(() {
-                  image = pickedFile;
+                  image = pickedFile; // Menyimpan gambar yang dipilih
                 });
               },
             ),
@@ -239,6 +242,7 @@ class _AiPageState extends State<AiPage> {
   }
 
   String _cleanAnswer(String answer) {
+    // Menghapus karakter khusus dari jawaban
     return answer.replaceAll(RegExp(r'\*\*'), '').trim();
   }
 }

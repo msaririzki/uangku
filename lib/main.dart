@@ -14,7 +14,6 @@ import 'package:mob3_uas_klp_02/pages/splash.dart';
 import 'package:mob3_uas_klp_02/pages/supervisor/supervisor_dashboard.dart';
 import 'package:mob3_uas_klp_02/widget/bottom_bar.dart';
 import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 /// Fungsi main untuk inisialisasi dan menjalankan aplikasi
 void main() async {
@@ -58,8 +57,10 @@ class MyApp extends StatelessWidget {
         'resetPassword': (context) =>
             const ResetPasswordScreen(), // Reset password
         'adminDashboard': (context) => AdminDashboard(),
-        'supervisorDashboard': (context) => SupervisorDashboard(), // Tambahkan rute untuk SupervisorDashboard
-        'Kecerdasan Buatan': (context) => AiPage(), // Tambahkan rute untuk KecerdasanBuatan
+        'supervisorDashboard': (context) =>
+            SupervisorDashboard(), // Tambahkan rute untuk SupervisorDashboard
+        'Kecerdasan Buatan': (context) =>
+            AiPage(), // Tambahkan rute untuk KecerdasanBuatan
       },
     );
   }

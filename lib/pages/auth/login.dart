@@ -79,19 +79,22 @@ class _LoginViewState extends State<LoginView> {
           );
         }
       },
-      // Builder untuk UI
+      // Builder untuk UI,
       builder: (context, state) {
-        // Redirect ke home jika authenticated
+        // Jika pengguna terautentikasi, lakukan redirect ke halaman sesuai role
         if (state is Authenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            // Redirect berdasarkan role
+            // Redirect berdasarkan role pengguna
             if (state.role == 'Admin') {
+              // Jika role adalah Admin, arahkan ke dashboard admin
               Navigator.pushNamedAndRemoveUntil(
                   context, 'adminDashboard', (Route<dynamic> route) => false);
             } else if (state.role == 'Supervisor') {
+              // Jika role adalah Supervisor, arahkan ke dashboard supervisor
               Navigator.pushNamedAndRemoveUntil(context, 'supervisorDashboard',
                   (Route<dynamic> route) => false);
             } else {
+              // Jika role adalah pengguna biasa, arahkan ke halaman pengguna
               Navigator.pushNamedAndRemoveUntil(
                   context, 'userPage', (Route<dynamic> route) => false);
             }
