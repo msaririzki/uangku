@@ -8,15 +8,16 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-  int userCount = 0;
-  int supervisorCount = 0;
+  int userCount = 0; // Menyimpan jumlah pengguna biasa
+  int supervisorCount = 0; // Menyimpan jumlah pengawas
 
   @override
   void initState() {
     super.initState();
-    fetchUserCounts();
+    fetchUserCounts(); // Memanggil fungsi untuk mengambil jumlah pengguna
   }
 
+  // Fungsi untuk mengambil jumlah pengguna dan pengawas dari Firestore
   Future<void> fetchUserCounts() async {
     final userCollection = FirebaseFirestore.instance.collection('users');
     final userSnapshot =
@@ -25,11 +26,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
         await userCollection.where('role', isEqualTo: 'Supervisor').get();
 
     setState(() {
-      userCount = userSnapshot.docs.length;
-      supervisorCount = supervisorSnapshot.docs.length;
+      userCount = userSnapshot.docs.length; // Mengupdate jumlah pengguna
+      supervisorCount =
+          supervisorSnapshot.docs.length; // Mengupdate jumlah pengawas
     });
   }
 
+  // Fungsi untuk membuat akun pengawas baru
   void createSupervisorAccount(
       String email, String password, String name) async {
     try {
@@ -65,12 +68,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard Admin'),
+        title: Text('Dashboard Admin'), // Judul aplikasi
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(Icons.logout), // Ikon logout
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signOut(); // Logout pengguna
               Navigator.pushReplacementNamed(
                   context, 'login'); // Ganti dengan rute login Anda
             },
@@ -81,8 +84,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('Jumlah Pengguna Biasa: $userCount'),
-            Text('Jumlah Pengawas: $supervisorCount'),
+            Text(
+                'Jumlah Pengguna Biasa: $userCount'), // Menampilkan jumlah pengguna
+            Text(
+                'Jumlah Pengawas: $supervisorCount'), // Menampilkan jumlah pengawas
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -91,14 +96,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text('Buat Akun Pengawas'),
+                      title: Text('Buat Akun Pengawas'), // Judul dialog
                       content: CreateSupervisorForm(
-                          onCreate: createSupervisorAccount),
+                          onCreate:
+                              createSupervisorAccount), // Form untuk membuat akun
                     );
                   },
                 );
               },
-              child: Text('Buat Akun Pengawas'),
+              child: Text('Buat Akun Pengawas'), // Teks tombol
             ),
           ],
         ),
@@ -107,6 +113,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 }
 
+// Kelas untuk form pembuatan akun pengawas
 class CreateSupervisorForm extends StatefulWidget {
   final Function(String email, String password, String name) onCreate;
 
@@ -118,16 +125,19 @@ class CreateSupervisorForm extends StatefulWidget {
 }
 
 class _CreateSupervisorFormState extends State<CreateSupervisorForm> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Kunci untuk form
+  final TextEditingController _emailController =
+      TextEditingController(); // Kontroler untuk email
+  final TextEditingController _passwordController =
+      TextEditingController(); // Kontroler untuk password
+  final TextEditingController _nameController =
+      TextEditingController(); // Kontroler untuk nama
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _nameController.dispose();
+    _emailController.dispose(); // Menghapus kontroler email
+    _passwordController.dispose(); // Menghapus kontroler password
+    _nameController.dispose(); // Menghapus kontroler nama
     super.dispose();
   }
 
@@ -140,31 +150,33 @@ class _CreateSupervisorFormState extends State<CreateSupervisorForm> {
         children: [
           TextFormField(
             controller: _emailController,
-            decoration: InputDecoration(labelText: 'Email'),
+            decoration:
+                InputDecoration(labelText: 'Email'), // Label untuk email
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Harap masukkan email';
+                return 'Harap masukkan email'; // Validasi email
               }
               return null;
             },
           ),
           TextFormField(
             controller: _passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
-            obscureText: true,
+            decoration:
+                InputDecoration(labelText: 'Password'), // Label untuk password
+            obscureText: true, // Menyembunyikan teks password
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Harap masukkan password';
+                return 'Harap masukkan password'; // Validasi password
               }
               return null;
             },
           ),
           TextFormField(
             controller: _nameController,
-            decoration: InputDecoration(labelText: 'Nama'),
+            decoration: InputDecoration(labelText: 'Nama'), // Label untuk nama
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Harap masukkan nama';
+                return 'Harap masukkan nama'; // Validasi nama
               }
               return null;
             },
@@ -181,7 +193,7 @@ class _CreateSupervisorFormState extends State<CreateSupervisorForm> {
                 Navigator.of(context).pop(); // Tutup dialog
               }
             },
-            child: Text('Buat Akun'),
+            child: Text('Buat Akun'), // Teks tombol untuk membuat akun
           ),
         ],
       ),
