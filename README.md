@@ -1,6 +1,6 @@
 # mob3_uas_klp_02
 
-A new Flutter project.
+Tema Aplikasi yang kami buat (kelompok 02) yaitu, PENGELOLAAN KEUANGAN, dengan nama Aplikasi UANGKU , Aplikasi ini bertujuan untuk mempermudah mengelola pencatatan keuangan pengguna aplikasi, jadi pada aplikasi terdapat fitur untuk membuat pencatatan uang masuk serta uang serta terdapat sebuah dashbord yang akan menampilkan log dari hasil aktivitas pengguna di aplikasi serta menampilkan jumlah saldonya, serta terdapat sebuah AI yang memudahkan pengguna untuk menayakan tentang keuangan ataupun yang lainya.
 
 ## Getting Started
 
